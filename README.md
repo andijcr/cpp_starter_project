@@ -1,7 +1,6 @@
 # cpp_starter_project
 
-[![Build status](https://ci.appveyor.com/api/projects/status/d1tbhi2frii45rcl/branch/main?svg=true)](https://ci.appveyor.com/project/cpp-best-practices/cpp-starter-project/branch/main)
-![CMake](https://github.com/cpp-best-practices/cpp_starter_project/workflows/CMake/badge.svg)
+![CI](https://github.com/cpp-best-practices/cpp_starter_project/workflows/ci/badge.svg)
 [![codecov](https://codecov.io/gh/cpp-best-practices/cpp_starter_project/branch/main/graph/badge.svg)](https://codecov.io/gh/cpp-best-practices/cpp_starter_project)
 [![Language grade: C++](https://img.shields.io/lgtm/grade/cpp/github/cpp-best-practices/cpp_starter_project)](https://lgtm.com/projects/g/cpp-best-practices/cpp_starter_project/context:cpp)
 
@@ -33,10 +32,25 @@ Note about install commands:
 
 ### Too Long, Didn't Install
 
-This is a really long list of dependencies, and it's easy to mess up.
-That's why we have a Docker image that's already set up for you.
-See the [Docker instructions](#docker-instructions) below.
+This is a really long list of dependencies, and it's easy to mess up. That's why:
 
+#### Docker
+We have a Docker image that's already set up for you. See the [Docker instructions](#docker-instructions).
+
+#### Setup-cpp
+
+We have [setup-cpp](https://github.com/aminya/setup-cpp) that is a cross-platform tool to install all the compilers and dependencies on the system.
+
+Please check [the setup-cpp documentation](https://github.com/aminya/setup-cpp) for more information.
+
+For example, on Windows, you can run the following to install llvm, cmake, ninja, ccache, conan, and cppcheck.
+```ps1
+# windows example (open shell as admin)
+curl -LJO "https://github.com/aminya/setup-cpp/releases/download/v0.5.7/setup_cpp_windows.exe"
+./setup_cpp_windows --compiler llvm --cmake true --ninja true --ccache true --conan true --cppcheck true
+
+RefreshEnv.cmd # reload the environment
+```
 
 ### Necessary Dependencies
 1. A C++ compiler that supports C++17.
@@ -304,9 +318,9 @@ CMake will detect which compiler was used to build each of the Conan targets. If
 				[Environment]::SetEnvironmentVariable("CXX", "cl.exe", "User")
 				refreshenv
 
-		  Set the architecture using [vsvarsall](https://docs.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=vs-2019#vcvarsall-syntax):
+		  Set the architecture using [vcvarsall](https://docs.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=vs-2019#vcvarsall-syntax):
 
-				vsvarsall.bat x64
+				vcvarsall.bat x64
 
 		- clang
 
@@ -338,6 +352,11 @@ With Cmake directly:
     cmake -S . -B ./build
 
 Cmake will automatically create the `./build` folder if it does not exist, and it wil configure the project.
+
+Instead, if you have CMake version 3.21+, you can use one of the configuration presets that are listed in the CmakePresets.json file.
+
+    cmake . --preset <configure-preset>
+    cmake --build
 
 #### (2.b) Configuring via ccmake:
 
@@ -497,26 +516,26 @@ See [libFuzzer Tutorial](https://github.com/google/fuzzing/blob/master/tutorial/
 ## Docker Instructions
 
 If you have [Docker](https://www.docker.com/) installed, you can run this
-in your terminal, when the Dockerfile is in your working directory:
+in your terminal, when the Dockerfile is inside the .devconatiner directory:
 
 ```bash
-docker build --tag=my_project:latest .
+docker build -f ./.devcontainer/Dockerfile --tag=my_project:latest .
 docker run -it my_project:latest
 ```
 
-This command will put you in a `bash` session in a Ubuntu 18.04 Docker container,
+This command will put you in a `bash` session in a Ubuntu 20.04 Docker container,
 with all of the tools listed in the [Dependencies](#dependencies) section already installed.
-Additionally, you will have `g++-10` and `clang++-11` installed as the default
+Additionally, you will have `g++-11` and `clang++-13` installed as the default
 versions of `g++` and `clang++`.
 
 If you want to build this container using some other versions of gcc and clang,
 you may do so with the `GCC_VER` and `LLVM_VER` arguments:
 
 ```bash
-docker build --tag=myproject:latest --build-arg GCC_VER=9 --build-arg LLVM_VER=10 .
+docker build --tag=myproject:latest --build-arg GCC_VER=10 --build-arg LLVM_VER=11 .
 ```
 
-The CC and CXX environment variables are set to GCC version 10 by default.
+The CC and CXX environment variables are set to GCC version 11 by default.
 If you wish to use clang as your default CC and CXX environment variables, you
 may do so like this:
 
@@ -546,7 +565,7 @@ You can configure and build [as directed above](#build) using these commands:
 /starter_project# cmake --build ./build
 ```
 
-You can configure and build using `clang-11`, without rebuilding the container,
+You can configure and build using `clang-13`, without rebuilding the container,
 with these commands:
 
 ```bash

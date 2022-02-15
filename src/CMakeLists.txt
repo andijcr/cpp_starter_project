@@ -1,0 +1,2 @@
+CPMAddPackage("gh:fmtlib/fmt#8.1.1")
+
